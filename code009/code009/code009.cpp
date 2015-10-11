@@ -447,10 +447,10 @@ void openingAudio(void) {
 		printf("Unable to initialize audio: %s\n", Mix_GetError());
 		exit(1);
 	}
-	mus = Mix_LoadMUS("/home/green/Desktop/sandbox/CGI/sound002/mixer/ff2prlde.mid");
-	mus2 = Mix_LoadMUS("/home/green/Desktop/sandbox/CGI/sound002/mixer/aria.mp3");
-	wav = Mix_LoadWAV("/home/green/Desktop/sandbox/CGI/sound002/mixer/po_p2k.wav");
-	wav2 = Mix_LoadWAV("/home/green/Desktop/sandbox/CGI/sound002/mixer/start.wav");
+	mus = Mix_LoadMUS("res/ff2prlde.mid");
+	mus2 = Mix_LoadMUS("res/aria.mp3");
+	wav = Mix_LoadWAV("res/po_p2k.wav");
+	wav2 = Mix_LoadWAV("res/start.wav");
 }
 //=========================================================//
 //=========================================================//

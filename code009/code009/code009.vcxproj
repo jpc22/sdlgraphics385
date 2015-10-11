@@ -274,6 +274,7 @@
   <ItemGroup>
     <None Include="freeglut.dll" />
     <None Include="glew32.dll" />
+    <None Include="res\ff2prlde.mid" />
     <None Include="SDL2 mixer+image\lib\SDL2_image.dll" />
     <None Include="SDL2 mixer+image\lib\SDL2_mixer.dll" />
     <None Include="SDL2.dll" />
@@ -283,6 +284,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\hello.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\aria.mp3" />
+    <Media Include="res\po_p2k.wav" />
+    <Media Include="res\start.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -322,10 +322,20 @@
     <None Include="SDL2.dll" />
     <None Include="SDL2_image.dll" />
     <None Include="SDL2_mixer.dll" />
+    <None Include="res\ff2prlde.mid" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\hello.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\aria.mp3" />
+    <Media Include="res\po_p2k.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="res\start.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>
