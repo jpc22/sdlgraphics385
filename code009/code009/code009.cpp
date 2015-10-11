@@ -28,6 +28,8 @@
 //=========================================================//
 #define window_width  1840
 #define window_height 1000
+SDL_Window* displayWindow;
+SDL_GLContext mainGLContext;
 //=========================================================//
 //=========================================================//
 // person position in the environment
@@ -86,6 +88,7 @@ bool events()
 		case SDL_KEYDOWN: key[event.key.keysym.sym] = true;   break;
 		case SDL_KEYUP: key[event.key.keysym.sym] = false;   break;
 		case SDL_QUIT: return false; break;
+		
 		}
 	}
 	return true;
@@ -328,6 +331,7 @@ void update_camera()
 void move_camera(void)
 {
 	// looking up
+	/*
 	if (key[SDLK_a]) {
 		g_elevationAngle += 2.0;
 	}
@@ -354,6 +358,7 @@ void move_camera(void)
 		g_playerPos[2] -= sin(rad) * DEFAULT_SPEED;
 		g_playerPos[0] -= cos(rad) * DEFAULT_SPEED;
 	}
+	*/
 }
 //=========================================================//
 //=========================================================//
@@ -395,6 +400,7 @@ static void display(void)
 
 	DrawGround();
 
+	SDL_GL_SwapWindow(displayWindow);
 	//SDL_GL_SwapBuffers();
 }
 //=========================================================//
@@ -414,6 +420,7 @@ void main_loop_function()
 		glColor3ub(000, 000, 255); glVertex2f(1, -1);
 		glColor3ub(255, 255, 000); glVertex2f(-1, -1);
 		glEnd();
+		
 
 		display();
 	}
@@ -479,12 +486,8 @@ void makeSound(void) {
 int main()
 {
 	// Initialize SDL with best video mode
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-		std::cout << "SDL_Init Error:" << SDL_GetError() << std::endl;
-		return 1;
-	}
-
+	SDL_Init(SDL_INIT_VIDEO);
+	/*
 	SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
 	if (win == nullptr) {
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -537,9 +540,14 @@ int main()
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
+	*/
 
-	//init_data();
-	//openingAudio();
+	displayWindow = SDL_CreateWindow("", 0, 30, window_width, window_height, SDL_WINDOW_OPENGL);
+
+	mainGLContext = SDL_GL_CreateContext(displayWindow);
+
+	init_data();
+	openingAudio();
 
 	//Not used in SDL2!
 	//
@@ -549,7 +557,7 @@ int main()
 	//else { vidFlags |= SDL_SWSURFACE; }
 	//int bpp = info->vfmt->BitsPerPixel;
 	//SDL_SetVideoMode(window_width, window_height, bpp, vidFlags);
-	/*
+
 	GL_Setup(window_width, window_height);
 
 	// environment background color
@@ -564,7 +572,8 @@ int main()
 
 	main_loop_function();
 	closingAudio();
-	*/
+	SDL_GL_DeleteContext(mainGLContext);
+	SDL_DestroyWindow(displayWindow);
 }
 //=========================================================//
 //=========================================================//
