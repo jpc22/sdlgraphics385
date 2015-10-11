@@ -31,6 +31,7 @@
 SDL_Window* displayWindow;
 SDL_GLContext mainGLContext;
 //=========================================================//
+GLfloat oldTime = 0.0f;
 //=========================================================//
 // person position in the environment
 void move_camera(void);
@@ -381,13 +382,20 @@ static void display(void)
 	GLfloat pos[4] = { 5.0, 5.0, 5.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
+	const GLfloat timeFromStart = glutGet(GLUT_ELAPSED_TIME);
 	// rotation is used for animation
-	static GLfloat rotation = 0.0;
+	const GLfloat rotation = fmod((timeFromStart / 100.0f), 360.0f);
+	// deltaTime is used for smooth movement speed at different framerate
+	const GLfloat deltaTime = timeFromStart - oldTime;
+	oldTime = timeFromStart;
+
+	// rotation is used for animation
+	//static GLfloat rotation = 0.0;
 	// it's increased by one every frame
-	rotation += 1.0;
+	//rotation += 1.0;
 	// and ranges between 0 and 360
-	if (rotation > 360.0)
-		rotation = 0.0;
+	//if (rotation > 360.0)
+	//	rotation = 0.0;
 	// draw all of our objects in their normal position
 	DrawNormalObjects(rotation);
 
@@ -478,7 +486,7 @@ void backgroundMusic(void) {
 //=========================================================//
 //=========================================================//
 void makeSound(void) {
-	backgroundMusic();
+	//backgroundMusic();
 	Mix_PlayChannel(-1, wav, 0);
 }
 //=========================================================//
@@ -542,7 +550,7 @@ int main()
 	SDL_Quit();
 	*/
 
-	displayWindow = SDL_CreateWindow("", 0, 30, window_width, window_height, SDL_WINDOW_OPENGL);
+	displayWindow = SDL_CreateWindow("", 0, 0, window_width, window_height, SDL_WINDOW_OPENGL|SDL_WINDOW_BORDERLESS);
 
 	mainGLContext = SDL_GL_CreateContext(displayWindow);
 
