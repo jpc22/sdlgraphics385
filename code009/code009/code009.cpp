@@ -44,7 +44,7 @@ GLfloat   g_viewAngle = -90.0;
 GLfloat   g_elevationAngle = 0.0;
 GLfloat   change_collor = 1.0;
 float rad = 0;
-const float DEFAULT_SPEED = 0.4f;
+const float DEFAULT_SPEED = 0.2f;
 //=========================================================//
 //=========================================================//
 // Collision detection
@@ -78,6 +78,14 @@ void closingAudio(void);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
+//smooth key events
+GLfloat g_elevationAngleVel = 0.0f;
+GLfloat g_viewAngleVel = 0.0f;
+GLfloat g_playerPosXVel = 0.0f;
+GLfloat g_playerPosYVel = 0.0f;
+GLfloat g_playerPosZVel = 0.0f;
+GLfloat g_playerPosXStrafeVel = 0.0f;
+GLfloat g_playerPosZStrafeVel = 0.0f;
 // Process pending events
 bool events()
 {
@@ -90,29 +98,40 @@ bool events()
 		{
 			switch (event.key.keysym.sym)
 			{
-				case SDLK_a:{
-					g_elevationAngle += 2.0;
+				case SDLK_r:{
+					g_elevationAngleVel = 2.0;
 				}break;
-				case SDLK_z: {
-					g_elevationAngle -= 2.0;
+				case SDLK_f: {
+					g_elevationAngleVel = -2.0;
 				}break;
-				case SDLK_RIGHT: {
-					g_viewAngle += 2.0;
-					// calculate camera rotation angle radians
-					rad = float(3.14159 * g_viewAngle / 180.0f);
+				case SDLK_e: {
+					g_viewAngleVel = 2.0f;
+					
 				}break;
-				case SDLK_LEFT: {
-					g_viewAngle -= 2.0;
-					// calculate camera rotation angle radians
-					rad = float(3.14159 * g_viewAngle / 180.0f);
+				case SDLK_q: {
+					g_viewAngleVel = -2.0f;
 				}break;
-				case SDLK_UP: {
-					g_playerPos[2] += sin(rad) * DEFAULT_SPEED;
-					g_playerPos[0] += cos(rad) * DEFAULT_SPEED;
+				case SDLK_w: {
+					g_playerPosXVel = 1.0f;
+					g_playerPosZVel = 1.0f;
 				}break;
-				case SDLK_DOWN: {
-					g_playerPos[2] -= sin(rad) * DEFAULT_SPEED;
-					g_playerPos[0] -= cos(rad) * DEFAULT_SPEED;
+				case SDLK_s: {
+					g_playerPosXVel = -1.0f;
+					g_playerPosZVel = -1.0f;
+				}break;
+				case SDLK_d: {
+					g_playerPosXStrafeVel = 1.0f;
+					g_playerPosZStrafeVel = 1.0f;
+				}break;
+				case SDLK_a: {
+					g_playerPosXStrafeVel = -1.0f;
+					g_playerPosZStrafeVel = -1.0f;
+				}break;
+				case SDLK_SPACE: {
+					g_playerPosYVel = 1.0f;
+				}break;
+				case SDLK_LCTRL: {
+					g_playerPosYVel = -1.0f;
 				}break;
 			}
 		}
@@ -121,23 +140,39 @@ bool events()
 		{
 			switch (event.key.keysym.sym)
 			{
-			case SDLK_a: {		
-
+			case SDLK_r: {		
+				g_elevationAngleVel = 0.0f;
 			}break;				
-			case SDLK_z: {
-				
+			case SDLK_f: {
+				g_elevationAngleVel = 0.0f;
 			}break;
-			case SDLK_RIGHT: {
-				
+			case SDLK_e: {
+				g_viewAngleVel = 0.0f;
 			}break;
-			case SDLK_LEFT: {
-				
+			case SDLK_q: {
+				g_viewAngleVel = 0.0f;
 			}break;
-			case SDLK_UP: {
-				
+			case SDLK_w: {
+				g_playerPosXVel = 0.0f;
+				g_playerPosZVel = 0.0f;
 			}break;
-			case SDLK_DOWN: {
-				
+			case SDLK_s: {
+				g_playerPosXVel = 0.0f;
+				g_playerPosZVel = 0.0f;
+			}break;
+			case SDLK_d: {
+				g_playerPosXStrafeVel = 0.0f;
+				g_playerPosZStrafeVel = 0.0f;
+			}break;
+			case SDLK_a: {
+				g_playerPosXStrafeVel = 0.0f;
+				g_playerPosZStrafeVel = 0.0f;
+			}break;
+			case SDLK_SPACE: {
+				g_playerPosYVel = 0.0f;
+			}break;
+			case SDLK_LCTRL: {
+				g_playerPosYVel = 0.0f;
 			}break;
 			}
 		}
@@ -146,6 +181,15 @@ bool events()
 		
 		}
 	}
+	g_elevationAngle += g_elevationAngleVel;
+	g_viewAngle += g_viewAngleVel;
+	// calculate camera rotation angle radians
+	rad = float(3.14159 * g_viewAngle / 180.0f);
+	g_playerPos[2] += g_playerPosZVel * sin(rad) * DEFAULT_SPEED;
+	g_playerPos[1] += g_playerPosYVel * DEFAULT_SPEED / 2;
+	g_playerPos[0] += g_playerPosXVel * cos(rad) * DEFAULT_SPEED;
+	g_playerPos[2] += g_playerPosZStrafeVel * sin(rad + 3.14159 / 2) * DEFAULT_SPEED;
+	g_playerPos[0] += g_playerPosXStrafeVel * cos(rad + 3.14159 / 2) * DEFAULT_SPEED;
 	return true;
 }
 //=========================================================//
