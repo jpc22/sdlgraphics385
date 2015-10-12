@@ -34,8 +34,8 @@ SDL_GLContext mainGLContext;
 GLfloat oldTime = 0.0f;
 //=========================================================//
 // person position in the environment
-void move_camera(void);
-static void keyboard(void);
+//void move_camera(void);
+//static void keyboard(void);
 void update_camera();
 
 GLdouble  g_playerPos[] = { 0.0, 1, 10.0 };//{ 0.0, 0.5, 10.0 };
@@ -77,7 +77,7 @@ void closingAudio(void);
 //=========================================================//
 //=========================================================//
 // Keydown booleans
-bool key[321];
+//bool key[321];
 // Process pending events
 bool events()
 {
@@ -86,8 +86,62 @@ bool events()
 	{
 		switch (event.type)
 		{
-		case SDL_KEYDOWN: key[event.key.keysym.sym] = true;   break;
-		case SDL_KEYUP: key[event.key.keysym.sym] = false;   break;
+		case SDL_KEYDOWN: 
+		{
+			switch (event.key.keysym.sym)
+			{
+				case SDLK_a:{
+					g_elevationAngle += 2.0;
+				}break;
+				case SDLK_z: {
+					g_elevationAngle -= 2.0;
+				}break;
+				case SDLK_RIGHT: {
+					g_viewAngle += 2.0;
+					// calculate camera rotation angle radians
+					rad = float(3.14159 * g_viewAngle / 180.0f);
+				}break;
+				case SDLK_LEFT: {
+					g_viewAngle -= 2.0;
+					// calculate camera rotation angle radians
+					rad = float(3.14159 * g_viewAngle / 180.0f);
+				}break;
+				case SDLK_UP: {
+					g_playerPos[2] += sin(rad) * DEFAULT_SPEED;
+					g_playerPos[0] += cos(rad) * DEFAULT_SPEED;
+				}break;
+				case SDLK_DOWN: {
+					g_playerPos[2] -= sin(rad) * DEFAULT_SPEED;
+					g_playerPos[0] -= cos(rad) * DEFAULT_SPEED;
+				}break;
+			}
+		}
+		break;
+		case SDL_KEYUP:
+		{
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_a: {		
+
+			}break;				
+			case SDLK_z: {
+				
+			}break;
+			case SDLK_RIGHT: {
+				
+			}break;
+			case SDLK_LEFT: {
+				
+			}break;
+			case SDLK_UP: {
+				
+			}break;
+			case SDLK_DOWN: {
+				
+			}break;
+			}
+		}
+		break;
 		case SDL_QUIT: return false; break;
 		
 		}
@@ -329,50 +383,15 @@ void update_camera()
 //=========================================================//
 //=========================================================//
 //void move_camera(int specialKEY,char normalKEY)
-void move_camera(void)
-{
-	// looking up
-	/*
-	if (key[SDLK_a]) {
-		g_elevationAngle += 2.0;
-	}
-	// looking down
-	if (key[SDLK_z]) {
-		g_elevationAngle -= 2.0;
-	}
 
-	if (key[SDLK_RIGHT]) {
-		g_viewAngle += 2.0;
-		// calculate camera rotation angle radians
-		rad = float(3.14159 * g_viewAngle / 180.0f);
-	}
-	if (key[SDLK_LEFT]) {
-		g_viewAngle -= 2.0;
-		// calculate camera rotation angle radians
-		rad = float(3.14159 * g_viewAngle / 180.0f);
-	}
-	if (key[SDLK_UP]) {
-		g_playerPos[2] += sin(rad) * DEFAULT_SPEED;
-		g_playerPos[0] += cos(rad) * DEFAULT_SPEED;
-	}
-	if (key[SDLK_DOWN]) {
-		g_playerPos[2] -= sin(rad) * DEFAULT_SPEED;
-		g_playerPos[0] -= cos(rad) * DEFAULT_SPEED;
-	}
-	*/
-}
 //=========================================================//
 //=========================================================//
-//static void keyboard(unsigned char key, int x, int y)
-static void keyboard(void)
-{
-	move_camera();
-}
+
 //=========================================================//
 //=========================================================//
 static void display(void)
 {
-	keyboard();
+	//keyboard();
 	update_camera();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -487,7 +506,7 @@ void backgroundMusic(void) {
 //=========================================================//
 void makeSound(void) {
 	//backgroundMusic();
-	Mix_PlayChannel(-1, wav, 0);
+	//Mix_PlayChannel(-1, wav, 0);
 }
 //=========================================================//
 //=========================================================//
