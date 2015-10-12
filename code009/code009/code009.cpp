@@ -3,27 +3,8 @@
 
 
 #include "stdafx.h"
+#include "CollisionSphereObject.h"
 
-//=========================================================//
-//=========================================================//
-#include <GL\glew.h>
-#include <GL\freeglut.h>
-#include <SDL.h>
-#include <SDL_mixer.h>
-#include <SDL_image.h>
-#include <windows.h>					// included in all Windows apps
-#include <winuser.h>          // Windows constants
-#undef main
-//=========================================================//
-//=========================================================//
-#include <iostream>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 //=========================================================//
 //=========================================================//
 #define window_width  1840
@@ -75,6 +56,9 @@ void openingAudio(void);
 void closingAudio(void);
 
 //=========================================================//
+std::vector<CollisionSphereObject*> * myColObjects;
+GLfloat o_pos[] = { 2.0f, 2.0f, 2.0f };
+CollisionSphereObject * o1 = new CollisionSphereObject(1.0f, o_pos);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
@@ -325,7 +309,8 @@ GLvoid drawCollision()
 	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
 	glColor4f(1.0f, change_collor, 0.0f, alphaTransparency);
 	glTranslatef(p2_x, p2_y, p2_z);
-	gluSphere(g_normalObject, p2_radius, 16, 10);
+	//gluSphere(g_normalObject, p2_radius, 16, 10);
+	glutSolidSphere(p2_radius, 16, 10);
 	glPopMatrix();
 
 	glDisable(GL_BLEND);        // Turn Blending Off
@@ -343,6 +328,7 @@ GLvoid DrawNormalObjects(GLfloat rotation)
 
 	drawCollision();
 
+	
 	// a cylinder
 	glPushMatrix();
 	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
@@ -461,6 +447,8 @@ static void display(void)
 	//	rotation = 0.0;
 	// draw all of our objects in their normal position
 	DrawNormalObjects(rotation);
+	//myColObjects->at(0)->draw();
+	o1->draw();
 
 	glColor3d(0.1, 0.1, 0.4);
 
@@ -554,8 +542,10 @@ void makeSound(void) {
 }
 //=========================================================//
 //=========================================================//
-int main()
+int main(int argc, char *argv[])
 {
+	//myColObjects->push_back(o1);
+
 	// Initialize SDL with best video mode
 	SDL_Init(SDL_INIT_VIDEO);
 	/*
@@ -630,6 +620,7 @@ int main()
 	//SDL_SetVideoMode(window_width, window_height, bpp, vidFlags);
 
 	GL_Setup(window_width, window_height);
+	glutInit(&argc, argv);
 
 	// environment background color
 	glClearColor(0.9, 0.9, 0.7, 1);//(1,1,1,1);

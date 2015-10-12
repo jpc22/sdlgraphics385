@@ -161,6 +161,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionSphereObject.h" />
     <ClInclude Include="freeglut+glew\include\GL\freeglut.h" />
     <ClInclude Include="freeglut+glew\include\GL\freeglut_ext.h" />
     <ClInclude Include="freeglut+glew\include\GL\freeglut_std.h" />
@@ -255,6 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code009.cpp" />
+    <ClCompile Include="CollisionSphereObject.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
