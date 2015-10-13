@@ -29,6 +29,93 @@ GLvoid CollisionSphereObject::draw()
 	if(colObjects != nullptr)
 		updateCollisions();
 
+	drawBoundingSphere();
+}
+
+GLboolean CollisionSphereObject::collidesWith(CollisionSphereObject * other)
+{
+	GLfloat distance =
+		((g_pos[0] - other->g_pos[0]) * (g_pos[0] - other->g_pos[0]))
+		+ ((g_pos[1] - other->g_pos[1]) * (g_pos[1] - other->g_pos[1]))
+		+ ((g_pos[2] - other->g_pos[2]) * (g_pos[2] - other->g_pos[2]));		
+	return distance <= (g_radius + other->g_radius) * (g_radius + other->g_radius);
+}
+
+void CollisionSphereObject::assignID()
+{
+	bool IDavailable = true;
+	int j = 0;
+	do 
+	{
+		IDavailable = true;
+		j++;
+		for (int i = 0; i < colObjects->size(); i++)
+		{
+			if (colObjects->at(i)->id == j)
+			{
+				IDavailable = false;
+			}
+		}
+		
+	} while (!IDavailable);
+	id = j;
+}
+
+GLvoid CollisionSphereObject::updateCollisions()
+{
+	if (colObjects->size() > 1)
+	{
+		for (int i = 0; i < colObjects->size(); i++)
+		{
+			if (id != colObjects->at(i)->id)
+			{
+				if (collidesWith(colObjects->at(i)))
+				{
+					collision_active = true;
+					//remember
+					/*
+					bool exists = false;
+					for (int j = 0; j < collidedWith.size(); j++)
+					{
+						if (collidedWith[j]->id == colObjects->at(i)->id)
+						{
+							exists = true;
+						}
+					}
+					if (!exists)
+					{
+						collidedWith.push_back(colObjects->at(i));
+					}
+					*/
+					//
+				}
+				else
+				{
+					collision_active = false;
+					//forget
+					/*
+					for (int j = 0; j < collidedWith.size(); j++)
+					{
+						if (collidedWith[j]->id == colObjects->at(i)->id)
+						{
+							collidedWith.erase(collidedWith.begin() + j);
+						}
+					}
+					*/
+					//
+				}
+			}
+		}
+	}
+}
+GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * colObjectsIn)
+{
+	colObjects = colObjectsIn;
+	assignID();
+}
+
+GLvoid CollisionSphereObject::drawBoundingSphere()
+{
 	//x_pos -= speed * deltaTime;
 	GLfloat alphaTransparency = 0.5f;
 	GLfloat red = 0.0;
@@ -61,66 +148,4 @@ GLvoid CollisionSphereObject::draw()
 	glDisable(GL_BLEND);        // Turn Blending Off
 	glEnable(GL_DEPTH_TEST);    // Turn Depth Testing On
 	glPopAttrib();
-}
-
-GLboolean CollisionSphereObject::collidesWith(CollisionSphereObject * other)
-{
-	GLfloat distance =
-		  ((g_pos[0] - other->g_pos[0]) * (g_pos[0] - other->g_pos[0]))
-		+ ((g_pos[1] - other->g_pos[1]) * (g_pos[1] - other->g_pos[1]))
-		+ ((g_pos[2] - other->g_pos[2]) * (g_pos[2] - other->g_pos[2]));
-	return distance <= (g_radius + other->g_radius) * (g_radius + other->g_radius);
-}
-
-void CollisionSphereObject::assignID()
-{
-	id = colObjects->size() + 1;
-}
-
-GLvoid CollisionSphereObject::updateCollisions()
-{
-	if (colObjects->size() > 1)
-	{
-		for (int i = 0; i < colObjects->size(); i++)
-		{
-			if (id != colObjects->at(i)->id)
-			{
-				if (collidesWith(colObjects->at(i)))
-				{
-					collision_active = true;
-					//remember
-					bool exists = false;
-					for (int j = 0; j < collidedWith.size(); j++)
-					{
-						if (collidedWith[j]->id == colObjects->at(i)->id)
-						{
-							exists = true;
-						}
-					}
-					if (!exists)
-					{
-						collidedWith.push_back(colObjects->at(i));
-					}
-					//
-				}
-				else
-				{
-					collision_active = false;
-					//forget
-					for (int j = 0; j < collidedWith.size(); j++)
-					{
-						if (collidedWith[j]->id == colObjects->at(i)->id)
-						{
-							collidedWith.erase(collidedWith.begin() + j);
-						}
-					}
-					//
-				}
-			}
-		}
-	}
-}
-GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * colObjectsIn)
-{
-	assignID();
 }

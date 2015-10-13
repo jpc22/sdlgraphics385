@@ -4,11 +4,12 @@
 
 #include "stdafx.h"
 #include "CollisionSphereObject.h"
+#include "Character.h"
 
 //=========================================================//
 //=========================================================//
-#define window_width  1840
-#define window_height 1000
+#define window_width  900
+#define window_height 600
 SDL_Window* displayWindow;
 SDL_GLContext mainGLContext;
 //=========================================================//
@@ -59,6 +60,8 @@ void closingAudio(void);
 std::vector<CollisionSphereObject*> * myColObjects;
 GLfloat o_pos[] = { 2.0f, 2.0f, 2.0f };
 CollisionSphereObject * o1 = new CollisionSphereObject(1.0f, o_pos);
+GLfloat o_pos2[] = { 1.5f, 2.0f, 2.0f };
+CollisionSphereObject * o2 = new CollisionSphereObject(1.0f, o_pos2);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
@@ -447,8 +450,11 @@ static void display(void)
 	//	rotation = 0.0;
 	// draw all of our objects in their normal position
 	DrawNormalObjects(rotation);
-	//myColObjects->at(0)->draw();
-	o1->draw();
+	for (int i = 0; i < myColObjects->size(); i++)
+	{
+		myColObjects->at(i)->draw();
+	}
+	//o1->draw();
 
 	glColor3d(0.1, 0.1, 0.4);
 
@@ -544,7 +550,15 @@ void makeSound(void) {
 //=========================================================//
 int main(int argc, char *argv[])
 {
-	//myColObjects->push_back(o1);
+	myColObjects = new std::vector<CollisionSphereObject *>();
+	myColObjects->push_back(o1);
+	myColObjects->push_back(o2);
+	for (int i = 0; i < myColObjects->size(); i++)
+	{
+		myColObjects->at(i)->setObjects(myColObjects);
+		//std::cout << myColObjects->at(i)->id << std::endl;
+	}
+	
 
 	// Initialize SDL with best video mode
 	SDL_Init(SDL_INIT_VIDEO);

@@ -161,6 +161,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionSphereObject.h" />
     <ClInclude Include="freeglut+glew\include\GL\freeglut.h" />
     <ClInclude Include="freeglut+glew\include\GL\freeglut_ext.h" />
@@ -255,6 +256,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="code009.cpp" />
     <ClCompile Include="CollisionSphereObject.cpp" />
     <ClCompile Include="stdafx.cpp">
