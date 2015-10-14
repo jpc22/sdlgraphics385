@@ -24,5 +24,8 @@ public:
 	};
 private:
 	enum { torso, l_shoulder, r_shoulder, l_elbow, r_elbow, l_leg, r_leg, l_knee, r_knee };
+	GLvoid drawRobot();
+	GLvoid drawArm(GLfloat offset);
+	GLvoid drawLeg(GLfloat offset);
 };
 

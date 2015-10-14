@@ -56,12 +56,12 @@ CollisionSphereObject * o1 = new CollisionSphereObject(1.0f, o_pos);
 GLfloat o_pos2[] = { -6.0f, 2.0f, 2.0f };
 CollisionSphereObject * o2 = new CollisionSphereObject(1.0f, o_pos2);
 GLfloat o_pos3[] = { 0.0f, 2.0f, 2.0f };
-CollisionSphereObject * o3 = new CollisionSphereObject(1.0f, o_pos3);
+KillerRobot * myRobot = new KillerRobot(1.0f, o_pos3);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
 bool shift = false;
-bool camera_o3 = false;
+bool camera_myRobot = false;
 //smooth key events
 GLfloat g_elevationAngleVel = 0.0f;
 GLfloat g_viewAngleVel = 0.0f;
@@ -84,8 +84,8 @@ bool events()
 			{
 				case SDLK_3:
 				{
-					if (camera_o3) camera_o3 = false;
-					else camera_o3 = true;
+					if (camera_myRobot) camera_myRobot = false;
+					else camera_myRobot = true;
 				}break;
 				case SDLK_LSHIFT:
 				shift = true; break;
@@ -97,19 +97,19 @@ bool events()
 				}break;
 				case SDLK_e: {
 					if (shift)
-						o3->faceAngleSpeed_deg = 1.0f;
+						myRobot->faceAngleSpeed_deg = 1.0f;
 					else
 						g_viewAngleVel = 1.0f;
 				}break;
 				case SDLK_q: {
 					if (shift)
-						o3->faceAngleSpeed_deg = -1.0f;
+						myRobot->faceAngleSpeed_deg = -1.0f;
 					else
 						g_viewAngleVel = -1.0f;
 				}break;
 				case SDLK_w: {
 					if (shift)
-						o3->g_speed = 1.0f;
+						myRobot->g_speed = 1.0f;
 					else
 					{
 						g_playerPosXVel = 1.0f;
@@ -119,7 +119,7 @@ bool events()
 				}break;
 				case SDLK_s: {
 					if (shift)
-						o3->g_speed = -1.0f;
+						myRobot->g_speed = -1.0f;
 					else
 					{
 						g_playerPosXVel = -1.0f;
@@ -157,20 +157,20 @@ bool events()
 				g_elevationAngleVel = 0.0f;
 			}break;
 			case SDLK_e: {
-				o3->faceAngleSpeed_deg = 0.0f;
+				myRobot->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_q: {
-				o3->faceAngleSpeed_deg = 0.0f;
+				myRobot->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_w: {
-				o3->g_speed = 0.0f;
+				myRobot->g_speed = 0.0f;
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
 			}break;
 			case SDLK_s: {
-				o3->g_speed = 0.0f;
+				myRobot->g_speed = 0.0f;
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
 			}break;
@@ -312,11 +312,11 @@ void update_camera()
 	if (g_playerPos[2] > (WORLD_SIZE - 50))
 		g_playerPos[2] = (WORLD_SIZE - 50);
 
-	if (camera_o3)
+	if (camera_myRobot)
 	{
-		g_lookAt[0] = o3->g_pos[0];
-		g_lookAt[1] = o3->g_pos[1];
-		g_lookAt[2] = o3->g_pos[2];
+		g_lookAt[0] = myRobot->g_pos[0];
+		g_lookAt[1] = myRobot->g_pos[1];
+		g_lookAt[2] = myRobot->g_pos[2];
 	}
 
 	else
@@ -356,10 +356,15 @@ void update()
 	if (o1->g_pos[0] < -7) {
 		change_direction = 1.0f;
 	}
+	/*
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->update();
 	}
+	*/
+	o1->update();
+	o2->update();
+	myRobot->update();
 
 	update_camera();
 }
@@ -377,11 +382,15 @@ static void display(void)
 	GLfloat pos[4] = { 5.0, 5.0, 5.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
+	/*
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->draw();
 	}
-	//o1->draw();
+	*/	
+	o1->draw();
+	o2->draw();
+	myRobot->draw();
 
 	glColor3d(0.1, 0.1, 0.4);
 
@@ -492,7 +501,7 @@ int main(int argc, char *argv[])
 	myColObjects = new std::vector<CollisionSphereObject *>();
 	myColObjects->push_back(o1);
 	myColObjects->push_back(o2);
-	myColObjects->push_back(o3);
+	myColObjects->push_back(myRobot);
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->setObjects(myColObjects);
