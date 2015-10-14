@@ -15,9 +15,16 @@ public:
 	GLvoid setObjects(std::vector<CollisionSphereObject*> * colObjects);
 	GLvoid drawBoundingSphere();
 	//std::vector<CollisionSphereObject*> collidedWith;
+	GLvoid update();
+	GLvoid updateCollisions();
+	GLboolean drawSphere = true;
+	GLfloat g_speed = 0.0f;
+	GLfloat g_speedMult = 0.002f;
+	GLfloat faceAngle_deg = 0.0f;
+	GLfloat faceAngleSpeed_deg = 0.0f;
+	GLfloat faceAngle_rad = 3.14159f * faceAngle_deg / 180.0f;
 private:
 	std::vector<CollisionSphereObject*> * colObjects;
 	void assignID();
-	GLvoid updateCollisions();
 };
 

@@ -4,16 +4,20 @@
 
 #include "stdafx.h"
 #include "CollisionSphereObject.h"
-#include "Character.h"
+//#include "Character.h"
+#include "KillerRobot.h"
 
 //=========================================================//
 //=========================================================//
-#define window_width  900
-#define window_height 600
+#define window_width  1125
+#define window_height 750
 SDL_Window* displayWindow;
 SDL_GLContext mainGLContext;
 //=========================================================//
 GLfloat oldTime = 0.0f;
+GLfloat timeFromStart = 0.0f;
+GLfloat rotation = 0.0f;
+GLfloat deltaTime = 0.0f;
 //=========================================================//
 // person position in the environment
 //void move_camera(void);
@@ -24,20 +28,10 @@ GLdouble  g_playerPos[] = { 0.0, 1, 10.0 };//{ 0.0, 0.5, 10.0 };
 GLdouble  g_lookAt[] = { 0.0, 0.0, 0.0 };
 GLfloat   g_viewAngle = -90.0;
 GLfloat   g_elevationAngle = 0.0;
-GLfloat   change_collor = 1.0;
 float rad = 0;
-const float DEFAULT_SPEED = 0.2f;
+const float DEFAULT_SPEED = 0.05f;
 //=========================================================//
 //=========================================================//
-// Collision detection
-GLfloat p1_radius = 0.3f;
-GLfloat p2_radius = 0.3f;
-GLfloat p1_x = -2.0f;
-GLfloat p2_x = 2.0f;
-GLfloat p1_y = 2.0f;
-GLfloat p2_y = 2.0f;
-GLfloat p1_z = 5.0f;
-GLfloat p2_z = 5.0f;
 GLfloat change_direction = 1.0;
 //=========================================================//
 const int   WORLD_SIZE = 250;
@@ -48,7 +42,6 @@ static void text_onScreen(int row, int col, const char *fmt, ...);
 GLUquadricObj *g_normalObject = NULL;
 void init_data(void);
 GLvoid  DrawGround();
-GLvoid  DrawNormalObjects(GLfloat rotation);
 
 void setup_sceneEffects(void);
 void makeSound(void);
@@ -58,13 +51,17 @@ void closingAudio(void);
 
 //=========================================================//
 std::vector<CollisionSphereObject*> * myColObjects;
-GLfloat o_pos[] = { 2.0f, 2.0f, 2.0f };
+GLfloat o_pos[] = { -4.0f, 2.0f, 2.0f };
 CollisionSphereObject * o1 = new CollisionSphereObject(1.0f, o_pos);
-GLfloat o_pos2[] = { 1.5f, 2.0f, 2.0f };
+GLfloat o_pos2[] = { -6.0f, 2.0f, 2.0f };
 CollisionSphereObject * o2 = new CollisionSphereObject(1.0f, o_pos2);
+GLfloat o_pos3[] = { 0.0f, 2.0f, 2.0f };
+CollisionSphereObject * o3 = new CollisionSphereObject(1.0f, o_pos3);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
+bool shift = false;
+bool camera_o3 = false;
 //smooth key events
 GLfloat g_elevationAngleVel = 0.0f;
 GLfloat g_viewAngleVel = 0.0f;
@@ -85,26 +82,50 @@ bool events()
 		{
 			switch (event.key.keysym.sym)
 			{
+				case SDLK_3:
+				{
+					if (camera_o3) camera_o3 = false;
+					else camera_o3 = true;
+				}break;
+				case SDLK_LSHIFT:
+				shift = true; break;
 				case SDLK_r:{
-					g_elevationAngleVel = 2.0;
+					g_elevationAngleVel = 1.0;
 				}break;
 				case SDLK_f: {
-					g_elevationAngleVel = -2.0;
+					g_elevationAngleVel = -1.0;
 				}break;
 				case SDLK_e: {
-					g_viewAngleVel = 2.0f;
-					
+					if (shift)
+						o3->faceAngleSpeed_deg = 1.0f;
+					else
+						g_viewAngleVel = 1.0f;
 				}break;
 				case SDLK_q: {
-					g_viewAngleVel = -2.0f;
+					if (shift)
+						o3->faceAngleSpeed_deg = -1.0f;
+					else
+						g_viewAngleVel = -1.0f;
 				}break;
 				case SDLK_w: {
-					g_playerPosXVel = 1.0f;
-					g_playerPosZVel = 1.0f;
+					if (shift)
+						o3->g_speed = 1.0f;
+					else
+					{
+						g_playerPosXVel = 1.0f;
+						g_playerPosZVel = 1.0f;
+					}
+					
 				}break;
 				case SDLK_s: {
-					g_playerPosXVel = -1.0f;
-					g_playerPosZVel = -1.0f;
+					if (shift)
+						o3->g_speed = -1.0f;
+					else
+					{
+						g_playerPosXVel = -1.0f;
+						g_playerPosZVel = -1.0f;
+					}
+					
 				}break;
 				case SDLK_d: {
 					g_playerPosXStrafeVel = 1.0f;
@@ -127,6 +148,8 @@ bool events()
 		{
 			switch (event.key.keysym.sym)
 			{
+			case SDLK_LSHIFT:
+				shift = false; break;
 			case SDLK_r: {		
 				g_elevationAngleVel = 0.0f;
 			}break;				
@@ -134,16 +157,20 @@ bool events()
 				g_elevationAngleVel = 0.0f;
 			}break;
 			case SDLK_e: {
+				o3->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_q: {
+				o3->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_w: {
+				o3->g_speed = 0.0f;
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
 			}break;
 			case SDLK_s: {
+				o3->g_speed = 0.0f;
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
 			}break;
@@ -168,15 +195,6 @@ bool events()
 		
 		}
 	}
-	g_elevationAngle += g_elevationAngleVel;
-	g_viewAngle += g_viewAngleVel;
-	// calculate camera rotation angle radians
-	rad = float(3.14159 * g_viewAngle / 180.0f);
-	g_playerPos[2] += g_playerPosZVel * sin(rad) * DEFAULT_SPEED;
-	g_playerPos[1] += g_playerPosYVel * DEFAULT_SPEED / 2;
-	g_playerPos[0] += g_playerPosXVel * cos(rad) * DEFAULT_SPEED;
-	g_playerPos[2] += g_playerPosZStrafeVel * sin(rad + 3.14159 / 2) * DEFAULT_SPEED;
-	g_playerPos[0] += g_playerPosXStrafeVel * cos(rad + 3.14159 / 2) * DEFAULT_SPEED;
 	return true;
 }
 //=========================================================//
@@ -267,124 +285,23 @@ GLvoid DrawGround()
 } // end DrawGround()
   //=========================================================//
   //=========================================================//
-GLvoid drawCollision()
-{
-	GLfloat alphaTransparency = 0.5;
-	GLfloat distance;
 
-	// move forward and backward
-	p1_x += 0.05f*change_direction;
-	p2_x -= 0.05f*change_direction;
-
-	if (p1_x > 2) {
-		change_direction = 1.0f - 2.0f;
-	}
-	if (p1_x < -2) {
-		change_direction = 1.0f;
-	}
-	// check-collision
-	distance = sqrt(((p1_x - p2_x) * (p1_x - p2_x))
-		+ ((p1_y - p2_y) * (p1_y - p2_y))
-		+ ((p1_z - p2_z) * (p1_z - p2_z)));
-	if (distance <= p2_radius + p1_radius) {
-		// Red :: collision
-		change_collor = 0.0;
-		makeSound();
-	}
-	else {
-		// Yellow :: no collision
-		change_collor = 1.0;
-	}
-	// enable blending for transparent sphere
-	glEnable(GL_BLEND);     // Turn Blending On
-	glDisable(GL_DEPTH_TEST);   // Turn Depth Testing Off
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// first sphere collides against the other
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor4f(1.0f, change_collor, 0.0f, alphaTransparency);
-	glTranslatef(p1_x, p1_y, p1_z);
-	gluSphere(g_normalObject, p1_radius, 16, 10);
-	glPopMatrix();
-	// second sphere collides against the first
-	//
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor4f(1.0f, change_collor, 0.0f, alphaTransparency);
-	glTranslatef(p2_x, p2_y, p2_z);
-	//gluSphere(g_normalObject, p2_radius, 16, 10);
-	glutSolidSphere(p2_radius, 16, 10);
-	glPopMatrix();
-
-	glDisable(GL_BLEND);        // Turn Blending Off
-	glEnable(GL_DEPTH_TEST);    // Turn Depth Testing On
-}
 //=========================================================//
 //=========================================================//
-GLvoid DrawNormalObjects(GLfloat rotation)
-{
-	// make sure the random color values we get are the same every time
-	srand(200);
 
-	// save the existing color properties
-	glPushAttrib(GL_CURRENT_BIT);
-
-	drawCollision();
-
-	
-	// a cylinder
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor3f(1, 1, 1);
-	glTranslatef(-25.0, 0.0, -4.0);
-	glRotatef(-90, 1.0, 0.0, 0.0);
-	gluCylinder(g_normalObject, 1.0, 1.0, 3.0, 32, 4);
-	glPopMatrix();
-
-	// a tapered cylinder
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor3f(1, 0, 0);
-	glTranslatef(5.0, 0.0, 3.0);
-	glRotatef(-90, 1.0, 0.0, 0.0);
-	gluCylinder(g_normalObject, 2.0, 0.5, 2.0, 32, 4);
-	glPopMatrix();
-
-	// a disk with a hole in it
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor3f(1, 1, 0);
-	glTranslatef(50.0, 1.5, -20.0);
-	glRotatef(rotation * 10.0f, 0.0, 1.0, 0.0);
-	gluDisk(g_normalObject, 0.7, 1.0, 32, 4);
-	glPopMatrix();
-
-	// a Cone
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor3f(0, 1, 0);
-	glTranslatef(-150.0, 0.5, 0.0);
-	glRotatef(-90, 1.0, 0.0, 0.0);
-	gluCylinder(g_normalObject, 1.0, 0.0, 2.0, 32, 2);
-	glPopMatrix();
-
-	// a bouncing sphere
-	glPushMatrix();
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
-	glColor3f(1, 0, 1);
-
-	// use a sine wave pattern to make the sphere look like it's bouncing
-	glTranslatef(5.0f, 3.0f + (float)sin(float(3.14159f*rotation / 90.0f)), 50.0f);
-	gluSphere(g_normalObject, 2.0f, 32, 20);
-	glPopMatrix();
-
-	// restore the previous color values
-	glPopAttrib();
-} // end DrawNormalObjects()
   //=========================================================//
   //=========================================================//
 void update_camera()
 {
+	g_elevationAngle += g_elevationAngleVel * DEFAULT_SPEED * deltaTime * 2.0;
+	g_viewAngle += g_viewAngleVel * DEFAULT_SPEED * deltaTime * 2.0;
+	// calculate camera rotation angle radians
+	rad = float(3.14159 * g_viewAngle / 180.0f);
+	g_playerPos[2] += g_playerPosZVel * sin(rad) * DEFAULT_SPEED * deltaTime;
+	g_playerPos[1] += g_playerPosYVel * DEFAULT_SPEED * deltaTime / 2.5;
+	g_playerPos[0] += g_playerPosXVel * cos(rad) * DEFAULT_SPEED * deltaTime;
+	g_playerPos[2] += g_playerPosZStrafeVel * sin(rad + 3.14159 / 2) * DEFAULT_SPEED * deltaTime;
+	g_playerPos[0] += g_playerPosXStrafeVel * cos(rad + 3.14159 / 2) * DEFAULT_SPEED * deltaTime;
 	// don't allow the player to wander past the "edge of the world"
 	if (g_playerPos[0] < -(WORLD_SIZE - 50))
 		g_playerPos[0] = -(WORLD_SIZE - 50);
@@ -395,15 +312,24 @@ void update_camera()
 	if (g_playerPos[2] > (WORLD_SIZE - 50))
 		g_playerPos[2] = (WORLD_SIZE - 50);
 
-	// calculate the player's angle of rotation in radians
-	float rad = float(3.14159 * g_viewAngle / 180.0f);
-	// use the players view angle to correctly set up the view matrix
-	g_lookAt[0] = float(g_playerPos[0] + 100 * cos(rad));
-	g_lookAt[2] = float(g_playerPos[2] + 100 * sin(rad));
+	if (camera_o3)
+	{
+		g_lookAt[0] = o3->g_pos[0];
+		g_lookAt[1] = o3->g_pos[1];
+		g_lookAt[2] = o3->g_pos[2];
+	}
 
-	rad = float(3.13149 * g_elevationAngle / 180.0f);
+	else
+	{
+		// use the players view angle to correctly set up the view matrix
+		g_lookAt[0] = float(g_playerPos[0] + 100 * cos(rad));
+		g_lookAt[2] = float(g_playerPos[2] + 100 * sin(rad));
 
-	g_lookAt[1] = float(g_playerPos[1] + 100 * sin(rad));
+		rad = float(3.14159 * g_elevationAngle / 180.0f);
+
+		g_lookAt[1] = float(g_playerPos[1] + 100 * sin(rad));
+	}
+	
 
 	// clear the modelview matrix
 	glLoadIdentity();
@@ -419,13 +345,30 @@ void update_camera()
 
 //=========================================================//
 //=========================================================//
+void update()
+{
+	o1->g_speed = change_direction;
+	o2->g_speed = -change_direction;
 
+	if (o1->g_pos[0] > -3) {
+		change_direction = -1.0f;
+	}
+	if (o1->g_pos[0] < -7) {
+		change_direction = 1.0f;
+	}
+	for (int i = 0; i < myColObjects->size(); i++)
+	{
+		myColObjects->at(i)->update();
+	}
+
+	update_camera();
+}
 //=========================================================//
 //=========================================================//
 static void display(void)
 {
 	//keyboard();
-	update_camera();
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_LIGHTING);
@@ -434,22 +377,6 @@ static void display(void)
 	GLfloat pos[4] = { 5.0, 5.0, 5.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-	const GLfloat timeFromStart = glutGet(GLUT_ELAPSED_TIME);
-	// rotation is used for animation
-	const GLfloat rotation = fmod((timeFromStart / 100.0f), 360.0f);
-	// deltaTime is used for smooth movement speed at different framerate
-	const GLfloat deltaTime = timeFromStart - oldTime;
-	oldTime = timeFromStart;
-
-	// rotation is used for animation
-	//static GLfloat rotation = 0.0;
-	// it's increased by one every frame
-	//rotation += 1.0;
-	// and ranges between 0 and 360
-	//if (rotation > 360.0)
-	//	rotation = 0.0;
-	// draw all of our objects in their normal position
-	DrawNormalObjects(rotation);
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->draw();
@@ -475,6 +402,16 @@ void main_loop_function()
 	float angle = 0.0f;
 	while (events())
 	{
+		//frame independent animations and movement
+		timeFromStart = SDL_GetTicks();
+		// rotation is used for animation
+		rotation = fmod((timeFromStart / 100.0f), 360.0f);
+		// deltaTime is used for smooth movement speed at different framerate
+		deltaTime = timeFromStart - oldTime;
+		oldTime = timeFromStart;
+
+		
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		glTranslatef(0, 0, -10);
@@ -485,6 +422,8 @@ void main_loop_function()
 		glColor3ub(000, 000, 255); glVertex2f(1, -1);
 		glColor3ub(255, 255, 000); glVertex2f(-1, -1);
 		glEnd();
+		
+		update();
 		
 
 		display();
@@ -553,6 +492,7 @@ int main(int argc, char *argv[])
 	myColObjects = new std::vector<CollisionSphereObject *>();
 	myColObjects->push_back(o1);
 	myColObjects->push_back(o2);
+	myColObjects->push_back(o3);
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->setObjects(myColObjects);

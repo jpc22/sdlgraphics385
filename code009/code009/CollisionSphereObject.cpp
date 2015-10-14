@@ -26,10 +26,8 @@ CollisionSphereObject::~CollisionSphereObject()
 
 GLvoid CollisionSphereObject::draw()
 {
-	if(colObjects != nullptr)
-		updateCollisions();
-
-	drawBoundingSphere();
+	if(drawSphere)
+		drawBoundingSphere();
 }
 
 GLboolean CollisionSphereObject::collidesWith(CollisionSphereObject * other)
@@ -61,52 +59,39 @@ void CollisionSphereObject::assignID()
 	id = j;
 }
 
+GLvoid CollisionSphereObject::update()
+{
+	faceAngle_deg += faceAngleSpeed_deg * g_speedMult * 60;
+	faceAngle_rad = 3.14159f * faceAngle_deg / 180.0f;
+	g_pos[2] += g_speed * sin(faceAngle_rad) * g_speedMult;
+	g_pos[0] += g_speed * cos(faceAngle_rad) * g_speedMult;
+	updateCollisions();
+}
+
 GLvoid CollisionSphereObject::updateCollisions()
 {
-	if (colObjects->size() > 1)
+	bool collided = false;
+	if (colObjects != nullptr)
 	{
-		for (int i = 0; i < colObjects->size(); i++)
+		if (colObjects->size() > 1)
 		{
-			if (id != colObjects->at(i)->id)
+			for (int i = 0; i < colObjects->size() && !collided; i++)
 			{
-				if (collidesWith(colObjects->at(i)))
+				if (id != colObjects->at(i)->id)
 				{
-					collision_active = true;
-					//remember
-					/*
-					bool exists = false;
-					for (int j = 0; j < collidedWith.size(); j++)
+					if (collidesWith(colObjects->at(i)))
 					{
-						if (collidedWith[j]->id == colObjects->at(i)->id)
-						{
-							exists = true;
-						}
+						collided = true;
 					}
-					if (!exists)
-					{
-						collidedWith.push_back(colObjects->at(i));
-					}
-					*/
-					//
-				}
-				else
-				{
-					collision_active = false;
-					//forget
-					/*
-					for (int j = 0; j < collidedWith.size(); j++)
-					{
-						if (collidedWith[j]->id == colObjects->at(i)->id)
-						{
-							collidedWith.erase(collidedWith.begin() + j);
-						}
-					}
-					*/
-					//
 				}
 			}
 		}
 	}
+	if (collided)
+	{
+		collision_active = true;
+	}
+	else collision_active = false;
 }
 GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * colObjectsIn)
 {
