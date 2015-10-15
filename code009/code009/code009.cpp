@@ -55,7 +55,7 @@ GLfloat o_pos[] = { -4.0f, 2.0f, 2.0f };
 CollisionSphereObject * o1 = new CollisionSphereObject(1.0f, o_pos);
 GLfloat o_pos2[] = { -6.0f, 2.0f, 2.0f };
 CollisionSphereObject * o2 = new CollisionSphereObject(1.0f, o_pos2);
-GLfloat o_pos3[] = { 0.0f, 2.0f, 2.0f };
+GLfloat o_pos3[] = { 4.0f, 2.0f, 2.0f };
 KillerRobot * myRobot = new KillerRobot(1.0f, o_pos3);
 //=========================================================//
 // Keydown booleans
@@ -82,6 +82,11 @@ bool events()
 		{
 			switch (event.key.keysym.sym)
 			{
+				case SDLK_g:
+				{
+					if (myRobot->autowalk) myRobot->autowalk = false;
+					else myRobot->autowalk = true;
+				}break;
 				case SDLK_3:
 				{
 					if (camera_myRobot) camera_myRobot = false;
@@ -157,11 +162,13 @@ bool events()
 				g_elevationAngleVel = 0.0f;
 			}break;
 			case SDLK_e: {
-				myRobot->faceAngleSpeed_deg = 0.0f;
+				if(myRobot->faceAngleSpeed_deg != 0.0f)
+					myRobot->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_q: {
-				myRobot->faceAngleSpeed_deg = 0.0f;
+				if (myRobot->faceAngleSpeed_deg != 0.0f)
+					myRobot->faceAngleSpeed_deg = 0.0f;
 				g_viewAngleVel = 0.0f;
 			}break;
 			case SDLK_w: {

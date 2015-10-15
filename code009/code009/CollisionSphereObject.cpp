@@ -109,6 +109,7 @@ GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * c
 
 GLvoid CollisionSphereObject::drawBoundingSphere()
 {
+	srand(time(NULL));
 	GLfloat alphaTransparency = 0.5f;
 	GLfloat red = 0.0;
 	GLfloat green = 0.0;

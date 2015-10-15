@@ -10,11 +10,13 @@ KillerRobot::KillerRobot()
 KillerRobot::KillerRobot(GLfloat radius) : CollisionSphereObject(radius)
 {
 	eyeSensor = new CollisionSphereObject(1.0f);
+	faceAngle_deg = 180;
 }
 
 KillerRobot::KillerRobot(GLfloat radius, GLfloat pos[3]) : CollisionSphereObject(radius, pos)
 {
 	eyeSensor = new CollisionSphereObject(1.0f, pos);
+	faceAngle_deg = 180;
 }
 
 KillerRobot::~KillerRobot()
@@ -30,6 +32,8 @@ GLvoid KillerRobot::setObjects(std::vector<CollisionSphereObject*> * colObjects)
 
 GLvoid KillerRobot::update()
 {
+	if (autowalk)
+		g_speed = 2.0f;
 	GLfloat x_pos = g_pos[0];
 	GLfloat z_pos = g_pos[2];
 	CollisionSphereObject::update();
@@ -39,9 +43,25 @@ GLvoid KillerRobot::update()
 	eyeSensor->update();
 	if (eyeSensor->collision_active)
 	{
+		if (autowalk)
+		{
+			faceAngleSpeed_deg = 1.0f;
+			//autowalkbit = true;
+		}
+			
 		g_pos[0] = x_pos;
 		g_pos[2] = z_pos;
 	}
+	else if (collision_active && autowalk)
+	{
+		faceAngleSpeed_deg = 1.0f;
+		//autowalkbit = true;
+	}
+	else if (autowalk)
+	{
+		faceAngleSpeed_deg = 0.0f;
+	}
+
 	if (g_speed > 0.5f || g_speed < -0.5f)
 	{
 		g_cycle += g_speed * 0.5f;
@@ -157,7 +177,7 @@ GLvoid KillerRobot::drawRobot()
 	glRotatef(-faceAngle_deg + 90.0f, 0.0f, 1.0f, 0.0f);
 	glTranslatef(0.0f, eyeSensor_y, eyeSensor_x);
 	glRotatef(-atan2(eyeSensor_y - 1.60f, eyeSensor_x) * 180.0f / 3.14159 + 180.0f, 1.0f, 0.0f, 0.0f);
-	glutSolidCone(1.0f, sqrtf(eyeSensor_x * eyeSensor_x + (eyeSensor_y - 1.35f) * (eyeSensor_y - 1.35f)), 32, 10);
+	glutSolidCone(1.0f, sqrtf(eyeSensor_x * eyeSensor_x + (eyeSensor_y - 1.35f) * (eyeSensor_y - 1.35f)), 64, 128);
 	glPopMatrix();
 
 	glDisable(GL_BLEND);
