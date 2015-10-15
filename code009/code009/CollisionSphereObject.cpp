@@ -63,9 +63,16 @@ GLvoid CollisionSphereObject::update()
 {
 	faceAngle_deg += faceAngleSpeed_deg * g_speedMult * 60;
 	faceAngle_rad = 3.14159f * faceAngle_deg / 180.0f;
+	GLfloat z_pos = g_pos[2];
+	GLfloat x_pos = g_pos[0];
 	g_pos[2] += g_speed * sin(faceAngle_rad) * g_speedMult;
 	g_pos[0] += g_speed * cos(faceAngle_rad) * g_speedMult;
 	updateCollisions();
+	if (collision_active)
+	{
+		g_pos[2] = z_pos;
+		g_pos[0] = x_pos;
+	}
 }
 
 GLvoid CollisionSphereObject::updateCollisions()

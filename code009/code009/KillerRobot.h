@@ -22,6 +22,7 @@ public:
 		0.0f, //left knee
 		0.0f  //right knee
 	};
+	GLfloat g_cycle = 0.0f;
 private:
 	enum { torso, l_shoulder, r_shoulder, l_elbow, r_elbow, l_leg, r_leg, l_knee, r_knee };
 	GLvoid drawRobot();

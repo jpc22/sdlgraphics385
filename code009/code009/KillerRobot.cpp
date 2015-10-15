@@ -22,12 +22,45 @@ KillerRobot::~KillerRobot()
 GLvoid KillerRobot::update()
 {
 	CollisionSphereObject::update();
+	if (g_speed > 0.5f || g_speed < -0.5f)
+	{
+		g_cycle += g_speed * 0.5f;
+		if (g_cycle > 360.0f)
+			g_cycle -= 360.0f;
+		else if (g_cycle < 0.0f)
+			g_cycle += 360.0f;
+	}
+	else
+	{
+		
+		if (g_cycle > 270.125f && g_cycle < 360.0f)
+		{
+			g_cycle += 1.0f * 0.25f;
+		}
+		else if (g_cycle > 180.125f && g_cycle < 270.0f)
+		{
+			g_cycle -= 1.0f * 0.25f;
+		}
+		else if (g_cycle > 90.125f && g_cycle < 180.0f)
+		{
+			g_cycle += 1.0f * 0.25f;
+		}
+		else if (g_cycle > 0.0f && g_cycle < 90.0f)
+		{
+			g_cycle -= 1.0f * 0.25f;
+		}
+		
+	}
+	g_angle[l_leg] = sin((3.14159f * g_cycle / 180)) * 45.0f;
+	g_angle[r_leg] = -sin((3.14159f * g_cycle / 180)) * 45.0f;
+	g_angle[l_knee] = fabs(sin((3.14159f * g_cycle / 180)) * 45.0f);
+	g_angle[r_knee] = fabs(sin((3.14159f * g_cycle / 180)) * 45.0f);
 }
 
 GLvoid KillerRobot::draw()
 {
-	CollisionSphereObject::draw();
 	drawRobot();
+	CollisionSphereObject::draw();
 }
 
 GLvoid KillerRobot::drawRobot()
@@ -42,7 +75,7 @@ GLvoid KillerRobot::drawRobot()
 	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
 	glColor4f(0.75f, 0.75f, 0.75f, 1.0f);
 	//glRotatef(faceAngle_deg, 0.0f, 1.0f, 0.0f);
-	glTranslatef(g_pos[0], g_pos[1], g_pos[2]);
+	glTranslatef(g_pos[0], g_pos[1] + 1.0f, g_pos[2]);
 	glRotatef(-faceAngle_deg + 90.0f, 0.0f, 1.0f, 0.0f);
 	glScalef(0.25f, 0.25f, 0.25f);
 	//torso/upper body
