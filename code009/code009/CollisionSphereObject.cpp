@@ -103,7 +103,8 @@ GLvoid CollisionSphereObject::updateCollisions()
 GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * colObjectsIn)
 {
 	colObjects = colObjectsIn;
-	assignID();
+	if(id == 0)
+		assignID();
 }
 
 GLvoid CollisionSphereObject::drawBoundingSphere()

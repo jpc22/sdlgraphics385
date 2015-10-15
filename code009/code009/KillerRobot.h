@@ -10,6 +10,7 @@ public:
 	~KillerRobot();
 	GLvoid draw();
 	GLvoid update();
+	GLvoid setObjects(std::vector<CollisionSphereObject*> * colObjects);
 	GLfloat g_angle[9] =
 	{
 		0.0f, //torso
@@ -28,5 +29,8 @@ private:
 	GLvoid drawRobot();
 	GLvoid drawArm(GLfloat offset);
 	GLvoid drawLeg(GLfloat offset);
+	CollisionSphereObject * eyeSensor;
+	GLfloat eyeSensor_x = 3.0f;
+	GLfloat eyeSensor_y = -1.0f;
 };
 

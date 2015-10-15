@@ -507,6 +507,7 @@ int main(int argc, char *argv[])
 		myColObjects->at(i)->setObjects(myColObjects);
 		//std::cout << myColObjects->at(i)->id << std::endl;
 	}
+	myRobot->setObjects(myColObjects);
 	
 
 	// Initialize SDL with best video mode

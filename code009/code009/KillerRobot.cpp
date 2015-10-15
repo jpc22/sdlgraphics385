@@ -9,19 +9,39 @@ KillerRobot::KillerRobot()
 
 KillerRobot::KillerRobot(GLfloat radius) : CollisionSphereObject(radius)
 {
+	eyeSensor = new CollisionSphereObject(1.0f);
 }
 
 KillerRobot::KillerRobot(GLfloat radius, GLfloat pos[3]) : CollisionSphereObject(radius, pos)
 {
+	eyeSensor = new CollisionSphereObject(1.0f, pos);
 }
 
 KillerRobot::~KillerRobot()
 {
 }
 
+GLvoid KillerRobot::setObjects(std::vector<CollisionSphereObject*> * colObjects)
+{
+	CollisionSphereObject::setObjects(colObjects);
+	colObjects->push_back(eyeSensor);
+	eyeSensor->setObjects(colObjects);
+}
+
 GLvoid KillerRobot::update()
 {
+	GLfloat x_pos = g_pos[0];
+	GLfloat z_pos = g_pos[2];
 	CollisionSphereObject::update();
+	eyeSensor->g_pos[0] = g_pos[0] + sin(-faceAngle_rad + 3.14159 / 2) * eyeSensor_x;
+	eyeSensor->g_pos[1] = g_pos[1] + eyeSensor_y;
+	eyeSensor->g_pos[2] = g_pos[2] + cos(-faceAngle_rad + 3.14159 / 2) * eyeSensor_x;
+	eyeSensor->update();
+	if (eyeSensor->collision_active)
+	{
+		g_pos[0] = x_pos;
+		g_pos[2] = z_pos;
+	}
 	if (g_speed > 0.5f || g_speed < -0.5f)
 	{
 		g_cycle += g_speed * 0.5f;
@@ -60,7 +80,9 @@ GLvoid KillerRobot::update()
 GLvoid KillerRobot::draw()
 {
 	drawRobot();
-	CollisionSphereObject::draw();
+	//eyeSensor->draw();
+	if(collision_active)
+		CollisionSphereObject::draw();
 }
 
 GLvoid KillerRobot::drawRobot()
@@ -126,6 +148,16 @@ GLvoid KillerRobot::drawRobot()
 	//right leg
 	drawLeg(-1.0f);
 	glPopMatrix();
+	glPopMatrix();
+
+	glPushMatrix();
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, rand() % 128);
+	glColor4f(eyeSensor->collision_active, !eyeSensor->collision_active, 0.0f, 0.25f);
+	glTranslatef(g_pos[0], g_pos[1], g_pos[2]);
+	glRotatef(-faceAngle_deg + 90.0f, 0.0f, 1.0f, 0.0f);
+	glTranslatef(0.0f, eyeSensor_y, eyeSensor_x);
+	glRotatef(-atan2(eyeSensor_y - 1.60f, eyeSensor_x) * 180.0f / 3.14159 + 180.0f, 1.0f, 0.0f, 0.0f);
+	glutSolidCone(1.0f, sqrtf(eyeSensor_x * eyeSensor_x + (eyeSensor_y - 1.35f) * (eyeSensor_y - 1.35f)), 32, 10);
 	glPopMatrix();
 
 	glDisable(GL_BLEND);
