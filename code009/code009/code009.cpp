@@ -78,6 +78,18 @@ bool events()
 	{
 		switch (event.type)
 		{
+		case SDL_MOUSEMOTION:
+		{
+
+		}break;
+		case SDL_MOUSEBUTTONDOWN:
+		{
+
+		}break;
+		case SDL_MOUSEBUTTONUP:
+		{
+
+		}break;
 		case SDL_KEYDOWN: 
 		{
 			switch (event.key.keysym.sym)
@@ -427,18 +439,6 @@ void main_loop_function()
 		oldTime = timeFromStart;
 
 		
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
-		glTranslatef(0, 0, -10);
-		glRotatef(angle, 0, 0, 1);
-		glBegin(GL_QUADS);
-		glColor3ub(255, 000, 000); glVertex2f(-1, 1);
-		glColor3ub(000, 255, 000); glVertex2f(1, 1);
-		glColor3ub(000, 000, 255); glVertex2f(1, -1);
-		glColor3ub(255, 255, 000); glVertex2f(-1, -1);
-		glEnd();
-		
 		update();
 		
 
@@ -592,6 +592,7 @@ int main(int argc, char *argv[])
 
 	GL_Setup(window_width, window_height);
 	glutInit(&argc, argv);
+	glewInit();
 
 	// environment background color
 	glClearColor(0.9, 0.9, 0.7, 1);//(1,1,1,1);
@@ -607,6 +608,7 @@ int main(int argc, char *argv[])
 	closingAudio();
 	SDL_GL_DeleteContext(mainGLContext);
 	SDL_DestroyWindow(displayWindow);
+	return 0;
 }
 //=========================================================//
 //=========================================================//
