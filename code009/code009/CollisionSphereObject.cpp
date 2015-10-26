@@ -67,12 +67,22 @@ GLvoid CollisionSphereObject::update()
 	GLfloat x_pos = g_pos[0];
 	g_pos[2] += g_speed * sin(faceAngle_rad) * g_speedMult;
 	g_pos[0] += g_speed * cos(faceAngle_rad) * g_speedMult;
+	
 	updateCollisions();
 	if (collision_active)
 	{
-		g_pos[2] = z_pos;
-		g_pos[0] = x_pos;
+		for (int i = 0; i < collidedWith.size(); i++)
+		{
+			collidedWith.at(i)->g_speed = g_speed;
+		}
+		g_speed = 0;
 	}
+	collidedWith.clear();
+
+	if (g_speed > 0)
+		g_speed -= g_friction;
+	else if (g_speed < 0)
+		g_speed = 0;
 }
 
 GLvoid CollisionSphereObject::updateCollisions()
@@ -89,6 +99,7 @@ GLvoid CollisionSphereObject::updateCollisions()
 					if (collidesWith(colObjects->at(i)))
 					{
 						collided = true;
+						collidedWith.push_back(colObjects->at(i));
 					}
 				}
 			}
