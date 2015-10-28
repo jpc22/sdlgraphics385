@@ -73,9 +73,16 @@ GLvoid CollisionSphereObject::update()
 	{
 		for (int i = 0; i < collidedWith.size(); i++)
 		{
-			collidedWith.at(i)->g_speed = g_speed;
+			CollisionSphereObject * other = collidedWith.at(i);
+			
+			if (other->movable)
+			{
+				other->g_speed += g_speed;
+				g_speed = 0;
+			}
+			else { faceAngle_deg += 180; }
 		}
-		g_speed = 0;
+		
 	}
 	collidedWith.clear();
 

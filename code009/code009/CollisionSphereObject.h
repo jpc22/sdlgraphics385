@@ -24,7 +24,7 @@ public:
 	GLfloat faceAngle_deg = 0.0f;
 	GLfloat faceAngleSpeed_deg = 0.0f;
 	GLfloat faceAngle_rad = 3.14159f * faceAngle_deg / 180.0f;
-	GLboolean movable = false;
+	GLboolean movable = true;
 private:
 	std::vector<CollisionSphereObject*> * colObjects;
 	std::vector<CollisionSphereObject*> collidedWith;
