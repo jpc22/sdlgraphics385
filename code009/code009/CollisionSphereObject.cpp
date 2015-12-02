@@ -69,7 +69,11 @@ GLvoid CollisionSphereObject::update()
 	g_pos[2] += g_speed * sin(faceAngle_rad) * g_speedMult;
 	g_pos[0] += g_speed * cos(faceAngle_rad) * g_speedMult;
 	
-	updateCollisions();
+	if (collision_enabled)
+	{
+		updateCollisions();
+	}
+	
 	/*
 	if (collision_active)
 	{
@@ -140,6 +144,7 @@ GLvoid CollisionSphereObject::setObjects(std::vector<CollisionSphereObject*> * c
 
 GLvoid CollisionSphereObject::drawBoundingSphere()
 {
+	
 	srand(time(NULL));
 	GLfloat alphaTransparency = 0.5f;
 	GLfloat red = 0.0;

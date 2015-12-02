@@ -29,7 +29,7 @@ GLdouble  g_lookAt[] = { 0.0, 0.0, 0.0 };
 GLfloat   g_viewAngle = -90.0;
 GLfloat   g_elevationAngle = 0.0;
 float rad = 0;
-const float DEFAULT_SPEED = 0.05f;
+const float DEFAULT_SPEED = 0.015f;
 //=========================================================//
 //=========================================================//
 GLfloat change_direction = 1.0;
@@ -51,17 +51,21 @@ void closingAudio(void);
 
 //=========================================================//
 std::vector<CollisionSphereObject*> * myColObjects;
-GLfloat o_pos[] = { -0.0f, 2.0f, 1.5f };
-CollisionSphereObject * o1 = new CollisionSphereObject(0.5f, o_pos);
-GLfloat o_pos2[] = { -6.0f, 2.0f, 2.0f };
-CollisionSphereObject * o2 = new CollisionSphereObject(0.5f, o_pos2);
+GLfloat o_pos[] = { -0.0f, 0.0f, 0.0f };
+CollisionSphereObject * sun = new CollisionSphereObject(2.0f, o_pos);
+GLfloat o_pos2[] = { -10.0f, 0.0f, 0.0f };
+CollisionSphereObject * earth = new CollisionSphereObject(0.5f, o_pos2);
+GLfloat o_pos3[] = { -12.0f, 0.0f, 0.0f };
+CollisionSphereObject * moon = new CollisionSphereObject(0.1f, o_pos3);
+GLfloat o_pos4[] = { -5.0f, 0.0f, 0.0f };
+CollisionSphereObject * dwarf = new CollisionSphereObject(1.0f, o_pos4);
 //GLfloat o_pos3[] = { 4.0f, 2.0f, 2.0f };
 //KillerRobot * myRobot = new KillerRobot(1.0f, o_pos3);
 //=========================================================//
 // Keydown booleans
 //bool key[321];
 bool shift = false;
-bool camera_myRobot = false;
+bool camera_dwarf = false;
 //smooth key events
 GLfloat g_elevationAngleVel = 0.0f;
 GLfloat g_viewAngleVel = 0.0f;
@@ -70,6 +74,8 @@ GLfloat g_playerPosYVel = 0.0f;
 GLfloat g_playerPosZVel = 0.0f;
 GLfloat g_playerPosXStrafeVel = 0.0f;
 GLfloat g_playerPosZStrafeVel = 0.0f;
+GLfloat xv = 0.0f;
+GLfloat zv = 0.0f;
 // Process pending events
 bool events()
 {
@@ -96,12 +102,12 @@ bool events()
 			{
 				case SDLK_g:
 				{
-					o2->g_speed = 1.0f;
+					dwarf->g_speed = 1.0f;
 				}break;
 				case SDLK_3:
 				{
-					if (camera_myRobot) camera_myRobot = false;
-					else camera_myRobot = true;
+					if (camera_dwarf) camera_dwarf = false;
+					else camera_dwarf = true;
 				}break;
 				case SDLK_LSHIFT:
 				shift = true; break;
@@ -118,20 +124,40 @@ bool events()
 						g_viewAngleVel = -1.0f;
 				}break;
 				case SDLK_w: {	
+					if (!shift)
+					{
 						g_playerPosXVel = 1.0f;
-						g_playerPosZVel = 1.0f;									
+						g_playerPosZVel = 1.0f;
+					}
+					else
+						zv = 1.0f;
 				}break;
 				case SDLK_s: {
+					if (!shift)
+					{
 						g_playerPosXVel = -1.0f;
-						g_playerPosZVel = -1.0f;		
+						g_playerPosZVel = -1.0f;
+					}
+					else
+						zv = -1.0f;
 				}break;
 				case SDLK_d: {
-					g_playerPosXStrafeVel = 1.0f;
-					g_playerPosZStrafeVel = 1.0f;
+					if (!shift)
+					{
+						g_playerPosXStrafeVel = 1.0f;
+						g_playerPosZStrafeVel = 1.0f;
+					}
+					else
+					xv = 1.0f;
 				}break;
 				case SDLK_a: {
-					g_playerPosXStrafeVel = -1.0f;
-					g_playerPosZStrafeVel = -1.0f;
+					if (!shift)
+					{
+						g_playerPosXStrafeVel = -1.0f;
+						g_playerPosZStrafeVel = -1.0f;
+					}
+					else
+					xv = -1.0f;
 				}break;
 				case SDLK_SPACE: {
 					g_playerPosYVel = 1.0f;
@@ -147,7 +173,12 @@ bool events()
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_LSHIFT:
-				shift = false; break;
+			{
+				shift = false;
+				xv = 0.0f;
+				zv = 0.0f;
+			}
+				 break;
 			case SDLK_r: {		
 				g_elevationAngleVel = 0.0f;
 			}break;				
@@ -163,18 +194,22 @@ bool events()
 			case SDLK_w: {
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
+				zv = 0.0f;
 			}break;
 			case SDLK_s: {
 				g_playerPosXVel = 0.0f;
 				g_playerPosZVel = 0.0f;
+				zv = 0.0f;
 			}break;
 			case SDLK_d: {
 				g_playerPosXStrafeVel = 0.0f;
 				g_playerPosZStrafeVel = 0.0f;
+				xv = 0.0f;
 			}break;
 			case SDLK_a: {
 				g_playerPosXStrafeVel = 0.0f;
 				g_playerPosZStrafeVel = 0.0f;
+				xv = 0.0f;
 			}break;
 			case SDLK_SPACE: {
 				g_playerPosYVel = 0.0f;
@@ -260,6 +295,7 @@ GLvoid DrawGround()
 	glColor3f(0.5f, 0.7f, 1.0f);
 
 	// draw the lines
+	
 	glBegin(GL_LINES);
 	for (int x = -WORLD_SIZE; x < WORLD_SIZE; x += 6)
 	{
@@ -306,9 +342,11 @@ void update_camera()
 	if (g_playerPos[2] > (WORLD_SIZE - 50))
 		g_playerPos[2] = (WORLD_SIZE - 50);
 
-	if (camera_myRobot)
+	if (camera_dwarf)
 	{
-
+		g_lookAt[0] = dwarf->g_pos[0];
+		g_lookAt[2] = dwarf->g_pos[2];
+		g_lookAt[1] = dwarf->g_pos[1];
 	}
 
 	else
@@ -345,8 +383,17 @@ void update()
 		myColObjects->at(i)->update();
 	}
 	*/
-	o1->update();
-	o2->update();
+	
+	if (shift)
+	{
+		dwarf->g_pos[0] += xv * DEFAULT_SPEED * deltaTime;
+		dwarf->g_pos[2] += zv * DEFAULT_SPEED * deltaTime;
+	}
+
+	sun->update();
+	earth->update();
+	moon->update();
+	dwarf->update();
 
 	update_camera();
 }
@@ -361,7 +408,7 @@ static void display(void)
 	glEnable(GL_LIGHTING);
 
 	// position the light
-	GLfloat pos[4] = { 5.0, 5.0, 5.0, 0.0 };
+	GLfloat pos[4] = { 0.0, 0.0, 0.0, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 	/*
@@ -370,16 +417,12 @@ static void display(void)
 		myColObjects->at(i)->draw();
 	}
 	*/	
-	o1->draw();
-	o2->draw();
-
-
+	sun->draw();
+	earth->draw();
+	moon->draw();
+	dwarf->draw();
 	glColor3d(0.1, 0.1, 0.4);
 
-	text_onScreen(0, 3, "Prof. Adriano Cavalcanti / A385 Computer Graphics / UAA");
-	text_onScreen(2, 3, "- look up or down: A / Z");
-	text_onScreen(3, 3, "- look right/left: arrows ->/<-");
-	text_onScreen(4, 3, "- walk forward/backward: arrows UP/Down");
 
 	DrawGround();
 
@@ -469,8 +512,10 @@ void makeSound(void) {
 int main(int argc, char *argv[])
 {
 	myColObjects = new std::vector<CollisionSphereObject *>();
-	myColObjects->push_back(o1);
-	myColObjects->push_back(o2);
+	myColObjects->push_back(sun);
+	myColObjects->push_back(earth);
+	myColObjects->push_back(moon);
+	myColObjects->push_back(dwarf);
 	for (int i = 0; i < myColObjects->size(); i++)
 	{
 		myColObjects->at(i)->setObjects(myColObjects);
@@ -556,7 +601,7 @@ int main(int argc, char *argv[])
 	glewInit();
 
 	// environment background color
-	glClearColor(0.9, 0.9, 0.7, 1);//(1,1,1,1);
+	glClearColor(0.0, 0.0, 0.0, 1);//(1,1,1,1);
 								   // deepth efect to objects
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);

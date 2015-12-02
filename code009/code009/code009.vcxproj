@@ -171,6 +171,7 @@
     <ClInclude Include="freeglut+glew\include\GL\glxew.h" />
     <ClInclude Include="freeglut+glew\include\GL\wglew.h" />
     <ClInclude Include="KillerRobot.h" />
+    <ClInclude Include="Planet.h" />
     <ClInclude Include="SDL 2.0.3\include\begin_code.h" />
     <ClInclude Include="SDL 2.0.3\include\close_code.h" />
     <ClInclude Include="SDL 2.0.3\include\SDL.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="code009.cpp" />
     <ClCompile Include="CollisionSphereObject.cpp" />
     <ClCompile Include="KillerRobot.cpp" />
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
