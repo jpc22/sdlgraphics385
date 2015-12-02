@@ -26,7 +26,7 @@ CollisionSphereObject::~CollisionSphereObject()
 
 GLvoid CollisionSphereObject::draw()
 {
-	if(drawSphere)
+	if(drawSphere && collision_active)
 		drawBoundingSphere();
 }
 
@@ -146,7 +146,7 @@ GLvoid CollisionSphereObject::drawBoundingSphere()
 {
 	
 	srand(time(NULL));
-	GLfloat alphaTransparency = 0.5f;
+	GLfloat alphaTransparency = 0.25f;
 	GLfloat red = 0.0;
 	GLfloat green = 0.0;
 	if (collision_active) {

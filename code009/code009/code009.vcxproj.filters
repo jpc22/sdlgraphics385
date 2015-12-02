@@ -347,9 +347,25 @@
     <None Include="SDL2_mixer.dll" />
     <None Include="res\ff2prlde.mid" />
     <None Include="SDL 2.0.3\lib\win32\SDL2.dll" />
+    <None Include="libjpeg-9.dll" />
+    <None Include="libpng16-16.dll" />
+    <None Include="libtiff-5.dll" />
+    <None Include="libwebp-4.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\hello.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sunrectangle.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\moonrectangle.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\earthrectangle.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\browndwarfrectangle.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

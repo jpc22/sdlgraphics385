@@ -282,6 +282,10 @@
   <ItemGroup>
     <None Include="freeglut.dll" />
     <None Include="glew32.dll" />
+    <None Include="libjpeg-9.dll" />
+    <None Include="libpng16-16.dll" />
+    <None Include="libtiff-5.dll" />
+    <None Include="libwebp-4.dll" />
     <None Include="res\ff2prlde.mid" />
     <None Include="SDL 2.0.3\lib\win32\SDL2.dll" />
     <None Include="SDL2 mixer+image\lib\SDL2_image.dll" />
@@ -291,7 +295,11 @@
     <None Include="SDL2_mixer.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\browndwarfrectangle.jpg" />
+    <Image Include="res\earthrectangle.jpg" />
     <Image Include="res\hello.bmp" />
+    <Image Include="res\moonrectangle.jpg" />
+    <Image Include="res\sunrectangle.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="res\aria.mp3" />
