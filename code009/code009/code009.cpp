@@ -51,7 +51,7 @@ void closingAudio(void);
 
 //=========================================================//
 std::vector<CollisionSphereObject*> * myColObjects;
-GLfloat o_pos[] = { -0.0f, 2.0f, 2.0f };
+GLfloat o_pos[] = { -0.0f, 2.0f, 1.5f };
 CollisionSphereObject * o1 = new CollisionSphereObject(0.5f, o_pos);
 GLfloat o_pos2[] = { -6.0f, 2.0f, 2.0f };
 CollisionSphereObject * o2 = new CollisionSphereObject(0.5f, o_pos2);
@@ -96,7 +96,7 @@ bool events()
 			{
 				case SDLK_g:
 				{
-					o2->g_speed = 10.0f;
+					o2->g_speed = 1.0f;
 				}break;
 				case SDLK_3:
 				{

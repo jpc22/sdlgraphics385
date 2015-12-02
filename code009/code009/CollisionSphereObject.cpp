@@ -61,6 +61,7 @@ void CollisionSphereObject::assignID()
 
 GLvoid CollisionSphereObject::update()
 {
+	g_friction = 0.001f;
 	faceAngle_deg += faceAngleSpeed_deg * g_speedMult * 60;
 	faceAngle_rad = 3.14159f * faceAngle_deg / 180.0f;
 	GLfloat z_pos = g_pos[2];
@@ -69,6 +70,7 @@ GLvoid CollisionSphereObject::update()
 	g_pos[0] += g_speed * cos(faceAngle_rad) * g_speedMult;
 	
 	updateCollisions();
+	/*
 	if (collision_active)
 	{
 		for (int i = 0; i < collidedWith.size(); i++)
@@ -77,19 +79,30 @@ GLvoid CollisionSphereObject::update()
 			
 			if (other->movable)
 			{
-				other->g_speed += g_speed;
+				
+				GLfloat t_z = g_pos[2] - other->g_pos[2];
+				GLfloat t_x = g_pos[0] - other->g_pos[0];
+				//GLfloat angle = fabsf(t_z) / fabsf(t_x);
+				//angle = atanf(angle);
+				GLfloat angle_deg = (atan2f(t_z, t_x) * 180.0f) / 3.14159f;
+				other->g_speed += g_speed * ((angle_deg - faceAngle_deg) / angle_deg);
+				faceAngle_deg -= angle_deg;
+				other->faceAngle_deg = -angle_deg;
 				g_speed = 0;
 			}
 			else { faceAngle_deg += 180; }
 		}
 		
 	}
+	*/
 	collidedWith.clear();
-
+	/*
 	if (g_speed > 0)
 		g_speed -= g_friction;
 	else if (g_speed < 0)
 		g_speed = 0;
+	*/
+	
 }
 
 GLvoid CollisionSphereObject::updateCollisions()

@@ -18,7 +18,7 @@ public:
 	GLvoid update();
 	GLvoid updateCollisions();
 	GLboolean drawSphere = true;
-	GLfloat g_friction = 0.025f;
+	GLfloat g_friction;
 	GLfloat g_speed = 0.0f;
 	GLfloat g_speedMult = 0.003f;
 	GLfloat faceAngle_deg = 0.0f;
